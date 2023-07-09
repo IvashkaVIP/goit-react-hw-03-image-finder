@@ -3,6 +3,7 @@ import { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { getImages } from './Api/Api';
+import { Button } from './Button/Button';
 
 
 
@@ -65,8 +66,9 @@ export class App extends Component {
 
     return (
       <div className={css.App}>
-        <Searchbar handleQuery={this.handleSubmit}></Searchbar>
-        {isImages && <ImageGallery images={images}></ImageGallery>}
+        <Searchbar handleQuery={this.handleSubmit}/>
+        {isImages && <ImageGallery images={images} />}
+        {isImages && <Button />}
         {/* <ImageGallery state={this.state.searchQuery}></ImageGallery> */}
       </div>
     );
