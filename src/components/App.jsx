@@ -4,6 +4,8 @@ import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { getImages } from './Api/Api';
 import { Button } from './Button/Button';
+import { Modal } from './Modal/Modal';
+
 
 
 
@@ -15,6 +17,7 @@ export class App extends Component {
     searchQuery: '',
     currentPage: 1,
     totalPages: 1,
+    selectedImageUrl: '',
     loading: false,
 
     // id: '',
@@ -23,7 +26,7 @@ export class App extends Component {
   };
 
    async componentDidUpdate(prevProps, prevState) {
-     const { images, searchQuery, currentPage, totalPages } = this.state;
+     const { images, searchQuery, currentPage} = this.state;
      let data = null;
          
     // console.log('prev >>>>>   ', prevState.searchQuery);
@@ -84,6 +87,13 @@ export class App extends Component {
     // console.log('OpenModal Click');
     console.log(evt.currentTarget.id);
     console.log(this.state.images[evt.currentTarget.id].largeImageURL);
+    this.setState({
+      selectedImageUrl: this.state.images[evt.currentTarget.id].largeImageURL,
+    });
+  }
+
+  closeModal = () => {
+    this.setState({selectedImageUrl: ''});
   }
   
   isLoadMore = () => {
@@ -94,18 +104,25 @@ export class App extends Component {
   }
 
   render() {
-    const { images } = this.state;
+    const { images, selectedImageUrl } = this.state;
     let isImages;
     if (images.length) isImages = true;
     else isImages = false;
     
-
     return (
       <div className={css.App}>
         <Searchbar handleQuery={this.handleSubmit} />
-        {isImages && <ImageGallery images={images} onClick={this.handleOpenModal} />}
-        {/* {this.isLoadMore() && <Button onClick={this.handleClickLoadMore} />} */}
-       </div>
+        {isImages && (
+          <ImageGallery images={images} onClick={this.handleOpenModal} />
+        )}
+        {this.isLoadMore() && <Button onClick={this.handleClickLoadMore} />}
+        {selectedImageUrl && (
+          <Modal onClose={this.closeModal}>
+            {' '}
+            <img src={selectedImageUrl} alt="" />{' '}
+          </Modal>
+        )}
+      </div>
     );
   }
 }
