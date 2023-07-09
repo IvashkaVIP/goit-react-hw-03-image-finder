@@ -104,7 +104,7 @@ export class App extends Component {
       <div className={css.App}>
         <Searchbar handleQuery={this.handleSubmit} />
         {isImages && <ImageGallery images={images} onClick={this.handleOpenModal} />}
-        {this.isLoadMore() && <Button onClick={this.handleClickLoadMore} />}
+        {/* {this.isLoadMore() && <Button onClick={this.handleClickLoadMore} />} */}
        </div>
     );
   }
