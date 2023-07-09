@@ -14,6 +14,7 @@ export class App extends Component {
     images: [],
     searchQuery: '',
     currentPage: 1,
+    totalPages: 1,
     loading: false,
 
     // id: '',
@@ -21,27 +22,43 @@ export class App extends Component {
     // largeImageURL: '',
   };
 
-   async componentDidUpdate(prevprops, prevState) {
-     const { images, searchQuery, currentPage } = this.state;
-
-    //  console.log(!images.length);
+   async componentDidUpdate(prevProps, prevState) {
+     const { images, searchQuery, currentPage, totalPages } = this.state;
+     let data = null;
+         
+    // console.log('prev >>>>>   ', prevState.searchQuery);
+    // console.log('current >>>>  ', this.state.searchQuery);
      
-     if (!images.length && searchQuery) {
-     const data = await getImages(searchQuery, currentPage);
-      //  console.log('didMount >>>>>>> ', data.hits);
+     if (!images.length && searchQuery) {                                    // ----------------- первый поиск
+       data = await getImages(searchQuery, currentPage);
+      //  console.log(data.total)
+       if (!data.total) {
+         alert('nothing was found for the current query, please ask another one');
+         this.setState({ searchQuery: '' }); return;
+       };
+     
+       this.setState({ images: [...data.hits], totalPages: data.totalHits });
+       return;
+     }
+    
+    
+     if (prevState.currentPage > currentPage) {
+       data = await getImages(searchQuery, currentPage);
+        this.setState(({ images }) => ({
+         images: [...images, ...data.hits], 
+        }));     
+     }
 
-      if (!images.length) this.setState(({ images }) => ({
-        images: [...data.hits],
-      })); else     this.setState(({ images }) => ({
-        images: [images, ...data.hits],
-      }));
+     if (prevState.searchQuery !== searchQuery && searchQuery) {
+       this.setState({ images: [], currentPage: 1, totalPages: 1, loading: false, });
+       return;
+     }
+
+     
        
-      //  this.setState ({ images: data.hits });
-    }
-   }
+    
 
-  
-  
+   }
   
   handleSubmit = evt => {
     evt.preventDefault();
@@ -54,23 +71,35 @@ export class App extends Component {
       return;
     }
     this.setState({ searchQuery: query });
-    evt.target.reset();
-    
+    // evt.target.reset();
+   
   };
+
+  handleClickLoadMore = evt => {
+    console.log('LoadMore Click');
+    this.setState(prev => ({ currentPage: ++prev.currentPage }));
+  }
+  
+  isLoadMore = () => {
+    const { searchQuery, currentPage, totalPages } = this.state;
+    if (!searchQuery || currentPage*IMAGE_PER_PAGE >= totalPages) return false;
+        
+    return true;
+  }
 
   render() {
     const { images } = this.state;
     let isImages;
     if (images.length) isImages = true;
     else isImages = false;
+    
 
     return (
       <div className={css.App}>
-        <Searchbar handleQuery={this.handleSubmit}/>
+        <Searchbar handleQuery={this.handleSubmit} />
         {isImages && <ImageGallery images={images} />}
-        {isImages && <Button />}
-        {/* <ImageGallery state={this.state.searchQuery}></ImageGallery> */}
-      </div>
+        {this.isLoadMore() && <Button onClick={this.handleClickLoadMore} />}
+       </div>
     );
   }
 }

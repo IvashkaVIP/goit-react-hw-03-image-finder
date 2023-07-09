@@ -2,12 +2,12 @@ import PropTypes from 'prop-types';
 
 import css from './Button.module.css';
 
-export const Button = ({ handleButtonClick }) => (
-  <button className={css.Button} type="button" onClick={handleButtonClick}>
+export const Button = ({ onClick }) => (
+  <button className={css.Button} type="button" onClick={onClick}>
     Load more
   </button>
 );
 
 PropTypes.ImageGallery = {
-  handleButtonClick: PropTypes.func.isRequired,
+  onClick: PropTypes.func.isRequired,
 };
