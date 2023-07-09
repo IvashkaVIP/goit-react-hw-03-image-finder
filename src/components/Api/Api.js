@@ -22,7 +22,7 @@ export async function getImages(searchQery = 'cat', page = '1') {
     
 }
 
-export function handlerError(error) {
+function handlerError(error) {
   if (error.response) {
     // The request was made and the server responded with a status code
     // that falls out of the range of 2xx

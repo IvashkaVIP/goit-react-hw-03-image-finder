@@ -2,15 +2,17 @@ import PropTypes from 'prop-types';
 import css from './ImageGallery.module.css';
 import { ImageGalleryItem } from '../ImageGalleryItem/ImageGalleryItem';
 
-export const ImageGallery = ({ id, webformatURL }) => {
+export const ImageGallery = ({ images }) => {
+  // console.log('ImageGallery >>>>>>>');
   return (
     <ul className={css.ImageGallery}>
-      <ImageGalleryItem></ImageGalleryItem>
+      {images.map(image => (
+        <ImageGalleryItem key={image.id} url={image.webformatURL} />
+      ))}
     </ul>
   );
 };
 
-
 PropTypes.ImageGallery = {
-
-}
+  images: PropTypes.array.isRequired,
+};
