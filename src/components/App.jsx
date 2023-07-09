@@ -79,6 +79,12 @@ export class App extends Component {
     // console.log('LoadMore Click');
     this.setState(prev => ({ currentPage: ++prev.currentPage }));
   }
+
+  handleOpenModal = evt => {
+    // console.log('OpenModal Click');
+    console.log(evt.currentTarget.id);
+    console.log(this.state.images[evt.currentTarget.id].largeImageURL);
+  }
   
   isLoadMore = () => {
     const { searchQuery, currentPage, totalPages } = this.state;
@@ -97,7 +103,7 @@ export class App extends Component {
     return (
       <div className={css.App}>
         <Searchbar handleQuery={this.handleSubmit} />
-        {isImages && <ImageGallery images={images} />}
+        {isImages && <ImageGallery images={images} onClick={this.handleOpenModal} />}
         {this.isLoadMore() && <Button onClick={this.handleClickLoadMore} />}
        </div>
     );
