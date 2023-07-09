@@ -76,7 +76,7 @@ export class App extends Component {
   };
 
   handleClickLoadMore = evt => {
-    console.log('LoadMore Click');
+    // console.log('LoadMore Click');
     this.setState(prev => ({ currentPage: ++prev.currentPage }));
   }
   
