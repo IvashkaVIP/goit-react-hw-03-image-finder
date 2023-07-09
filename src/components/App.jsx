@@ -5,7 +5,7 @@ import { ImageGallery } from './ImageGallery/ImageGallery';
 import { getImages } from './Api/Api';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
-import {Loader} from './Loader/Loader'
+import { Loader } from './Loader/Loader';
 
 export const IMAGE_PER_PAGE = 12;
 
@@ -28,25 +28,39 @@ export class App extends Component {
 
     if (!images.length && searchQuery) {
       // ----------------- первый поиск
-      data = await getImages(searchQuery, currentPage);
-      //  console.log(data.total)
-      if (!data.total) {
-        alert(
-          'nothing was found for the current query, please ask another one'
-        );
-        this.setState({ searchQuery: '' });
+      
+      try {        
+        data = await getImages(searchQuery, currentPage);
+        if (!data.total) {
+          alert(
+            'nothing was found for the current query, please ask another one'
+          );
+          this.setState({ searchQuery: '' });
+          return;
+        }
+        this.setState({ images: [...data.hits], totalPages: data.totalHits });
         return;
+      } catch (er) {
+        console.log(er);
+      } finally {
+        
       }
+      
 
-      this.setState({ images: [...data.hits], totalPages: data.totalHits });
-      return;
+      
     }
 
     if (prevState.currentPage > currentPage) {
-      data = await getImages(searchQuery, currentPage);
-      this.setState(({ images }) => ({
-        images: [...images, ...data.hits],
-      }));
+      
+      try {
+          data = await getImages(searchQuery, currentPage);
+          this.setState(({ images }) => ({
+          images: [...images, ...data.hits]        
+        }));
+      } catch (er) {
+        console.log(er);
+      }
+      
     }
 
     if (prevState.searchQuery !== searchQuery && searchQuery) {
@@ -102,6 +116,7 @@ export class App extends Component {
   render() {
     const { images, selectedImageUrl, isLoading } = this.state;
     
+
     return (
       <div className={css.App}>
         <Searchbar handleQuery={this.handleSubmit} />
