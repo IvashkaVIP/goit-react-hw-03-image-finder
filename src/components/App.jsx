@@ -1,11 +1,12 @@
 import css from './App.module.css';
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Searchbar } from './Searchbar/Searchbar';
 import { ImageGallery } from './ImageGallery/ImageGallery';
 import { getImages } from './Api/Api';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { Loader } from './Loader/Loader';
+import {ServiceMessage} from './ServiceMessage/ServiceMessage'
 // import { toast } from 'react-toastify';
 
 export const IMAGE_PER_PAGE = 12;
@@ -20,15 +21,28 @@ export class App extends Component {
     isLoading: false,
   };
 
+  async componentDidUpdate(prevProps, prevState) {
+    const { searchQuery, currentPage } = this.state;
+
+    if (prevState.searchQuery !== searchQuery) {
+      this.apiImages(true, searchQuery, currentPage);
+    }
+
+    if (prevState.currentPage !== currentPage) {
+      this.apiImages(false, searchQuery, currentPage);
+    }
+  }
+
   apiImages = async (isNewSet, query, page) => {
     let data;
 
     this.setState({ isLoading: true });
-    data = await getImages(query, page);
-    this.setState({ isLoading: false });
-
-    if (!data.totalHits) {
-      alert('nothing was found for the current query, please ask another one');
+    try {
+      data = await getImages(query, page);
+    } catch (er) {
+      console.log(er);
+    } finally {
+      this.setState({ isLoading: false });
     }
 
     if (isNewSet)
@@ -42,6 +56,10 @@ export class App extends Component {
         images: [...images, ...data.hits],
         totalPages: data.totalHits,
       }));
+
+    //  if (!data.totallHits) {
+    //    alert('nothing was found for the current query, please ask another one');
+    //  }
   };
 
   handleSubmit = evt => {
@@ -54,18 +72,6 @@ export class App extends Component {
     }
     this.setState({ searchQuery: query });
   };
-
-  async componentDidUpdate(prevProps, prevState) {
-    const { searchQuery, currentPage } = this.state;
-
-    if (prevState.searchQuery !== searchQuery) {
-      this.apiImages(true, searchQuery, currentPage);
-    }
-
-    if (prevState.currentPage !== currentPage) {
-      this.apiImages(false, searchQuery, currentPage);
-    }
-  }
 
   handleClickLoadMore = evt => {
     // console.log('LoadMore Click');
@@ -87,19 +93,17 @@ export class App extends Component {
 
   isLoadMore = () => {
     const { searchQuery, currentPage, totalPages } = this.state;
-    if (!searchQuery || currentPage * IMAGE_PER_PAGE >= totalPages)
-      return false;
-
-    return true;
+    return !(!searchQuery || currentPage * IMAGE_PER_PAGE >= totalPages);
   };
 
   render() {
-    const { images, selectedImageUrl, isLoading } = this.state;
+    const { images, selectedImageUrl, isLoading} = this.state;
 
     return (
       <div className={css.App}>
         <Searchbar handleQuery={this.handleSubmit} />
         {isLoading && <Loader />}
+        <ServiceMessage State={ this.state} />
         <ImageGallery images={images} onClick={this.handleOpenModal} />
         {this.isLoadMore() && <Button onClick={this.handleClickLoadMore} />}
         {selectedImageUrl && (
