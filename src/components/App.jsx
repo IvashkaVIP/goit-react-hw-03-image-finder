@@ -36,13 +36,13 @@ export class App extends Component {
   apiImages = async (isNewSet, query, page) => {
     let data;
 
-    this.setState({ isLoading: true });
+    // this.setState({ isLoading: true });
     try {
       data = await getImages(query, page);
     } catch (er) {
       console.log(er);
     } finally {
-      this.setState({ isLoading: false });
+      // this.setState({ isLoading: false });
     }
 
     if (isNewSet)
@@ -57,6 +57,9 @@ export class App extends Component {
         totalPages: data.totalHits,
       }));
 
+    
+    
+    
     //  if (!data.totallHits) {
     //    alert('nothing was found for the current query, please ask another one');
     //  }
