@@ -6,7 +6,7 @@ import { getImages } from './Api/Api';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { Loader } from './Loader/Loader';
-import {ServiceMessage} from './ServiceMessage/ServiceMessage'
+import { ServiceMessage } from './ServiceMessage/ServiceMessage';
 // import { toast } from 'react-toastify';
 
 export const IMAGE_PER_PAGE = 12;
@@ -45,11 +45,6 @@ export class App extends Component {
       this.setState({ isLoading: false });
     }
 
-
-
-
-    
-
     if (isNewSet)
       this.setState({
         images: [...data.hits],
@@ -62,9 +57,6 @@ export class App extends Component {
         totalPages: data.totalHits,
       }));
 
-    
-    
-    
     //  if (!data.totallHits) {
     //    alert('nothing was found for the current query, please ask another one');
     //  }
@@ -81,9 +73,9 @@ export class App extends Component {
     this.setState({ searchQuery: query });
   };
 
-handleClickLoadMore = () => {
-  this.setState(prevState => {
-    // console.log('Click LoadMore');
+  handleClickLoadMore = () => {
+    this.setState(prevState => {
+      // console.log('Click LoadMore');
       return {
         currentPage: prevState.currentPage + 1,
       };
@@ -109,13 +101,13 @@ handleClickLoadMore = () => {
   };
 
   render() {
-    const { images, selectedImageUrl, isLoading} = this.state;
+    const { images, selectedImageUrl, isLoading } = this.state;
 
     return (
       <div className={css.App}>
         <Searchbar handleQuery={this.handleSubmit} />
         {isLoading && <Loader />}
-        <ServiceMessage State={ this.state} />
+        <ServiceMessage State={this.state} />
         <ImageGallery images={images} onClick={this.handleOpenModal} />
         {this.isLoadMore() && <Button onClick={this.handleClickLoadMore} />}
         {selectedImageUrl && (
