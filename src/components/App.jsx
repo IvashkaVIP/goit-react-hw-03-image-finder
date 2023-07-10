@@ -83,7 +83,7 @@ export class App extends Component {
 
 handleClickLoadMore = () => {
   this.setState(prevState => {
-    console.log('Click LoadMore');
+    // console.log('Click LoadMore');
       return {
         currentPage: prevState.currentPage + 1,
       };
