@@ -25,37 +25,48 @@ export class App extends Component {
     const { searchQuery, currentPage } = this.state;
 
     if (prevState.searchQuery !== searchQuery) {
-      this.apiImages(true, searchQuery, currentPage);
+      this.apiImages(searchQuery, currentPage);
     }
 
     if (prevState.currentPage !== currentPage) {
-      this.apiImages(false, searchQuery, currentPage);
+      this.apiImages(searchQuery, currentPage);
     }
   }
 
-  apiImages = async (isNewSet, query, page) => {
+  apiImages = async (query, page) => {
     let data;
 
-    // this.setState({ isLoading: true });
+    this.setState({ isLoading: true });
     try {
       data = await getImages(query, page);
     } catch (er) {
       console.log(er);
     } finally {
-      // this.setState({ isLoading: false });
+      this.setState({ isLoading: false });
     }
 
-    if (isNewSet)
-      this.setState({
-        images: [...data.hits],
-        totalPages: data.totalHits,
-        currentPage: 1,
-      });
-    else
-      this.setState(({ images }) => ({
+
+ 
+        this.setState(({ images }) => ({
         images: [...images, ...data.hits],
         totalPages: data.totalHits,
+        currentPage: page,
       }));
+
+
+
+
+    // if (isNewSet)
+    //   this.setState({
+    //     images: [...data.hits],
+    //     totalPages: data.totalHits,
+    //     currentPage: 1,
+    //   });
+    // else
+    //   this.setState(({ images }) => ({
+    //     images: [...images, ...data.hits],
+    //     totalPages: data.totalHits,
+    //   }));
 
     
     
