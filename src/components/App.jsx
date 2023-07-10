@@ -25,15 +25,15 @@ export class App extends Component {
     const { searchQuery, currentPage } = this.state;
 
     if (prevState.searchQuery !== searchQuery) {
-      this.apiImages(searchQuery, currentPage);
+      this.apiImages(true, searchQuery, currentPage);
     }
 
     if (prevState.currentPage !== currentPage) {
-      this.apiImages(searchQuery, currentPage);
+      this.apiImages(false, searchQuery, currentPage);
     }
   }
 
-  apiImages = async (query, page) => {
+  apiImages = async (isNewSet, query, page) => {
     let data;
 
     this.setState({ isLoading: true });
@@ -46,27 +46,21 @@ export class App extends Component {
     }
 
 
- 
-        this.setState(({ images }) => ({
+
+
+    
+
+    if (isNewSet)
+      this.setState({
+        images: [...data.hits],
+        totalPages: data.totalHits,
+        currentPage: 1,
+      });
+    else
+      this.setState(({ images }) => ({
         images: [...images, ...data.hits],
         totalPages: data.totalHits,
-        currentPage: page,
       }));
-
-
-
-
-    // if (isNewSet)
-    //   this.setState({
-    //     images: [...data.hits],
-    //     totalPages: data.totalHits,
-    //     currentPage: 1,
-    //   });
-    // else
-    //   this.setState(({ images }) => ({
-    //     images: [...images, ...data.hits],
-    //     totalPages: data.totalHits,
-    //   }));
 
     
     
@@ -87,9 +81,13 @@ export class App extends Component {
     this.setState({ searchQuery: query });
   };
 
-  handleClickLoadMore = evt => {
-    // console.log('LoadMore Click');
-    this.setState(prev => ({ currentPage: ++prev.currentPage }));
+handleClickLoadMore = () => {
+  this.setState(prevState => {
+    console.log('Click LoadMore');
+      return {
+        currentPage: prevState.currentPage + 1,
+      };
+    });
   };
 
   handleOpenModal = evt => {
