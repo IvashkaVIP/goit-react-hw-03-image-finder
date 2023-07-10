@@ -1,6 +1,5 @@
 export const ServiceMessage = ({ State }) => {
     const { images, searchQuery } = State;
-    console.log(State);
     if (searchQuery && !images.length) { return (
       <h1
         style={{
