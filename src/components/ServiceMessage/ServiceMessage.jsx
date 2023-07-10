@@ -1,6 +1,6 @@
 export const ServiceMessage = ({ State }) => {
-    const { images, searchQuery } = State;
-    if (searchQuery && !images.length) { return (
+    const { images, searchQuery, isLoading } = State;
+    if (!isLoading && searchQuery && !images.length) { return (
       <h1
         style={{
           marginLeft: 'auto',
