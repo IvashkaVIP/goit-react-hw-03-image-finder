@@ -6,6 +6,7 @@ import { getImages } from './Api/Api';
 import { Button } from './Button/Button';
 import { Modal } from './Modal/Modal';
 import { Loader } from './Loader/Loader';
+// import { toast } from 'react-toastify';
 
 export const IMAGE_PER_PAGE = 12;
 
@@ -19,73 +20,52 @@ export class App extends Component {
     isLoading: false,
   };
 
-  async componentDidUpdate(prevProps, prevState) {
-    const { images, searchQuery, currentPage } = this.state;
-    let data = null;
+  apiImages = async (isNewSet, query, page) => {
+    let data;
 
-    // console.log('prev >>>>>   ', prevState.searchQuery);
-    // console.log('current >>>>  ', this.state.searchQuery);
+    this.setState({ isLoading: true });
+    data = await getImages(query, page);
+    this.setState({ isLoading: false });
 
-    if (!images.length && searchQuery) {
-      // ----------------- первый поиск
-      
-      try {        
-        data = await getImages(searchQuery, currentPage);
-        if (!data.total) {
-          alert(
-            'nothing was found for the current query, please ask another one'
-          );
-          this.setState({ searchQuery: '' });
-          return;
-        }
-        this.setState({ images: [...data.hits], totalPages: data.totalHits });
-        return;
-      } catch (er) {
-        console.log(er);
-      } finally {
-        
-      }
-      
-
-      
+    if (!data.totalHits) {
+      alert('nothing was found for the current query, please ask another one');
     }
 
-    if (prevState.currentPage > currentPage) {
-      
-      try {
-          data = await getImages(searchQuery, currentPage);
-          this.setState(({ images }) => ({
-          images: [...images, ...data.hits]        
-        }));
-      } catch (er) {
-        console.log(er);
-      }
-      
-    }
-
-    if (prevState.searchQuery !== searchQuery && searchQuery) {
+    if (isNewSet)
       this.setState({
-        images: [],
+        images: [...data.hits],
+        totalPages: data.totalHits,
         currentPage: 1,
-        totalPages: 1,
-        isLoading: false,
       });
-      return;
-    }
-  }
+    else
+      this.setState(({ images }) => ({
+        images: [...images, ...data.hits],
+        totalPages: data.totalHits,
+      }));
+  };
 
   handleSubmit = evt => {
     evt.preventDefault();
     const query = evt.target[1].value.trim();
     // console.log(query);
-
     if (!query) {
       alert('enter a search query');
       return;
     }
     this.setState({ searchQuery: query });
-    // evt.target.reset();
   };
+
+  async componentDidUpdate(prevProps, prevState) {
+    const { searchQuery, currentPage } = this.state;
+
+    if (prevState.searchQuery !== searchQuery) {
+      this.apiImages(true, searchQuery, currentPage);
+    }
+
+    if (prevState.currentPage !== currentPage) {
+      this.apiImages(false, searchQuery, currentPage);
+    }
+  }
 
   handleClickLoadMore = evt => {
     // console.log('LoadMore Click');
@@ -115,7 +95,6 @@ export class App extends Component {
 
   render() {
     const { images, selectedImageUrl, isLoading } = this.state;
-    
 
     return (
       <div className={css.App}>

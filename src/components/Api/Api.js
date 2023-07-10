@@ -15,6 +15,7 @@ export const getImages = async (searchQery , page = '1') => {
     //console.log(resp.data);
   } catch (error) {
     handlerError(error);
+    return error;
   } finally {
     }
     
