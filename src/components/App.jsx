@@ -24,16 +24,15 @@ export class App extends Component {
   async componentDidUpdate(prevProps, prevState) {
     const { searchQuery, currentPage } = this.state;
 
-    if (prevState.searchQuery !== searchQuery) {
-      this.apiImages(true, searchQuery, currentPage);
-    }
-
-    if (prevState.currentPage !== currentPage) {
-      this.apiImages(false, searchQuery, currentPage);
+    if (
+      prevState.searchQuery !== searchQuery ||
+      prevState.currentPage !== currentPage
+    ) {
+      this.apiImages(searchQuery, currentPage);
     }
   }
 
-  apiImages = async (isNewSet, query, page) => {
+  apiImages = async (query, page) => {
     let data;
 
     this.setState({ isLoading: true });
@@ -44,27 +43,12 @@ export class App extends Component {
     } finally {
       this.setState({ isLoading: false });
     }
-
-
-
-    if (isNewSet)
-      this.setState({
-        images: [...data.hits],
-        totalPages: data.totalHits,
-        currentPage: 1,
-      });
-    else
+    
       this.setState(({ images }) => ({
         images: [...images, ...data.hits],
         totalPages: data.totalHits,
       }));
 
-    
-    
-    
-    //  if (!data.totallHits) {
-    //    alert('nothing was found for the current query, please ask another one');
-    //  }
   };
 
   handleSubmit = evt => {
@@ -75,7 +59,7 @@ export class App extends Component {
       alert('enter a search query');
       return;
     }
-    this.setState({ searchQuery: query });
+    this.setState({ images: [], searchQuery: query, currentPage: 1});
   };
 
 handleClickLoadMore = () => {

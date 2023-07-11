@@ -8,7 +8,7 @@ export const ServiceMessage = ({ State }) => {
           color: '#1500d3',
         }}
       >
-        Sorry, no data available on request "{searchQuery}"{' '}
+        Sorry, no data available on request "{searchQuery}"
       </h1>
     ); }
     
