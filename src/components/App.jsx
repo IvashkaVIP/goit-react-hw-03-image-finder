@@ -47,9 +47,6 @@ export class App extends Component {
 
 
 
-
-    
-
     if (isNewSet)
       this.setState({
         images: [...data.hits],
