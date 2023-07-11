@@ -51,15 +51,11 @@ export class App extends Component {
 
   };
 
-  handleSubmit = evt => {
-    evt.preventDefault();
-    const query = evt.target[1].value.trim();
-    // console.log(query);
-    if (!query) {
-      alert('enter a search query');
-      return;
-    }
-    this.setState({ images: [], searchQuery: query, currentPage: 1});
+  handleSubmit = ({query}) => {
+    if (!query) { alert('The request cannot be empty'); return }
+    
+    this.setState({ images: [], searchQuery: query, currentPage: 1 });
+    
   };
 
 handleClickLoadMore = () => {
