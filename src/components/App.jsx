@@ -81,8 +81,12 @@ handleClickLoadMore = () => {
   };
 
   isLoadMore = () => {
-    const { searchQuery, currentPage, totalPages } = this.state;
-    return !(!searchQuery || currentPage * IMAGE_PER_PAGE >= totalPages);
+    const { searchQuery, currentPage, totalPages, isLoading } = this.state;
+    return !(
+      !searchQuery ||
+      currentPage * IMAGE_PER_PAGE >= totalPages ||
+      isLoading
+    );
   };
 
   render() {
